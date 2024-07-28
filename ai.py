@@ -1,10 +1,8 @@
-
-
 import os
 import google.generativeai as genai
 api_key = os.getenv('API_KEY')
 genai.configure(api_key=api_key)
-
+import markdown
 
 generation_config = {
   "temperature": 1,
@@ -19,17 +17,27 @@ model = genai.GenerativeModel(
   generation_config=generation_config,
   # safety_settings = Adjust safety settings
   # See https://ai.google.dev/gemini-api/docs/safety-settings
-  system_instruction="you are jarvis a large langugae model",
-  tools='code_execution',
+  system_instruction="""You are a large language model, artificial intelligence name Alpha, you are created in hasan industries. 
+    use pollination ai for any image needed
+![Image](https://image.pollinations.ai/prompt/{description}?width={width}&height={height})
+  
+where {description} is:
+{sceneDetailed}%20{adjective}%20{charactersDetailed}%20{visualStyle}%20{genre}%20{artistReference}
+ 
+
+add this markdown list to show images in the response
+"""
+#   tools='code_execution',
 )
 
 chat_session = model.start_chat(
   history=[
+      
   ]
 )
 def get_ai_response(query):
     response = chat_session.send_message(query)
-    return response.text
+    return markdown.markdown(response.text)
 
 
 
